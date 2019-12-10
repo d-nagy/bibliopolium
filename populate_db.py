@@ -31,10 +31,11 @@ res = pd.merge(res, tags_df, on='tag_id').drop('tag_id', axis=1)
 res.rename({'book_id': 'id', 'tag_name': 'genre'}, axis=1, inplace=True)
 
 user_ids = ratings_df.user_id.unique()
-passwords = [bcrypt.hashpw(str(user_id).encode(), bcrypt.gensalt())
-             for user_id in user_ids]
+usernames = [f'user{i}' for i in user_ids]
+passwords = [bcrypt.hashpw(str(i).encode(), bcrypt.gensalt())
+             for i in user_ids]
 
-data = {'id': user_ids, 'password': passwords}
+data = {'id': user_ids, 'username': usernames, 'password': passwords}
 users_df  = pd.DataFrame(data)
 
 conn = sqlite3.connect('./test.db')
@@ -43,4 +44,3 @@ ratings_df.to_sql('ratings', con=conn, if_exists='replace', index_label='id')
 users_df.to_sql('users', con=conn, if_exists='replace', index=False)
 conn.commit()
 conn.close()
-
