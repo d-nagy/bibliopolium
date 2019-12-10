@@ -1,6 +1,5 @@
 import sqlite3
 import pandas as pd
-import numpy as np
 import bcrypt
 
 ratings_df = pd.read_csv('./goodbooks/ratings.csv').head(5000)
@@ -29,18 +28,28 @@ res = res.drop(['goodreads_book_id', 'best_book_id', 'work_id',
 
 res = pd.merge(res, tags_df, on='tag_id').drop('tag_id', axis=1)
 res.rename({'book_id': 'id', 'tag_name': 'genre'}, axis=1, inplace=True)
+res.drop_duplicates('id', inplace=True)
 
-user_ids = ratings_df.user_id.unique()
+user_ids = [int(i) for i in ratings_df.user_id.unique()]
 usernames = [f'user{i}' for i in user_ids]
-passwords = [bcrypt.hashpw(str(i).encode(), bcrypt.gensalt())
+passwords = [bcrypt.hashpw(str(i).encode(), bcrypt.gensalt()).decode()
              for i in user_ids]
 
-data = {'id': user_ids, 'username': usernames, 'password': passwords}
-users_df  = pd.DataFrame(data)
+rating_values = [tuple([v for v in row.values]) for _, row in ratings_df.iterrows()]
+book_values = [tuple([v for v in row.values]) for _, row in res.iterrows()]
+user_values = [values for values in zip(user_ids, usernames, passwords)]
+
+
+from app import db, create_app
+db.drop_all(app=create_app())
+db.create_all(app=create_app())
 
 conn = sqlite3.connect('./test.db')
-res.to_sql('books', con=conn, if_exists='replace', index=False)
-ratings_df.to_sql('ratings', con=conn, if_exists='replace', index_label='id')
-users_df.to_sql('users', con=conn, if_exists='replace', index=False)
+c = conn.cursor()
+
+c.executemany("INSERT INTO rating (user_id, book_id, rating) VALUES (?, ?, ?)", rating_values)
+c.executemany("INSERT INTO book VALUES (?, ?, ?, ?)", book_values)
+c.executemany("INSERT INTO user VALUES (?, ?, ?)", user_values)
+
 conn.commit()
 conn.close()
