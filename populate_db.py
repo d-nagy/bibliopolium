@@ -35,7 +35,7 @@ usernames = [f'user{i}' for i in user_ids]
 passwords = [bcrypt.hashpw(str(i).encode(), bcrypt.gensalt()).decode()
              for i in user_ids]
 
-rating_values = [tuple([v for v in row.values]) for _, row in ratings_df.iterrows()]
+rating_values = [tuple([int(v) for v in row.values]) for _, row in ratings_df.iterrows()]
 book_values = [tuple([v for v in row.values]) for _, row in res.iterrows()]
 user_values = [values for values in zip(user_ids, usernames, passwords)]
 
