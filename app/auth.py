@@ -1,6 +1,7 @@
 import bcrypt
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.urls import url_parse
 from . import db
 from .models import User
 
@@ -8,10 +9,14 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/login')
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.recommended'))
     return render_template('login.html')
 
 @auth.route('/signup')
 def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.recommended'))
     return render_template('signup.html')
 
 @auth.route('/logout')
@@ -25,6 +30,7 @@ def logout():
 def signup_post():
     username = request.form.get('username')
     password = request.form.get('password')
+    confirm = request.form.get('confirm')
 
     # Try and find a user with the given username
     user = User.query.filter_by(username=username).first()
@@ -32,6 +38,10 @@ def signup_post():
     # If user exists, redirect to signup page to try again
     if user:
         flash('Username already exists')
+        return redirect(url_for('auth.signup'))
+
+    if password != confirm:
+        flash('Password confirmation must match password')
         return redirect(url_for('auth.signup'))
 
     # Otherwise create the new user
@@ -58,4 +68,8 @@ def login_post():
         return redirect(url_for('auth.login'))
 
     login_user(user, remember=remember)
-    return redirect(url_for('main.profile'))
+    next_page = request.args.get('next')
+    if not next_page or url_parse(next_page).netloc != '':
+        next_page = url_for('main.recommended')
+
+    return redirect(next_page)

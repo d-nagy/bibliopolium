@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero has-text-left is-primary">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        Welcome {{ current_user.username }}
+      </h1>
+      <h2 class="subtitle">
+        Here are some books we think you'll enjoy!
+      </h2>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
