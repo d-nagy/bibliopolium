@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, url_for
 from flask_login import login_required, current_user
 from . import db
 from .models import Book
-import numpy as np
+from .recommender import get_recommendations
 
 main = Blueprint('main', __name__)
 
@@ -32,7 +32,12 @@ def index():
 @main.route('/recommended')
 @login_required
 def recommended():
-    return render_template('recommended.html')
+    recommendations = get_recommendations(current_user.user_id, db.engine, 12)
+    books = [Book.query.filter_by(book_id=book_id).first() for book_id in recommendations]
+    ratings = get_ratings(books)
+
+    return render_template('recommended.html', books=books, ratings=ratings,
+                            num_pages=1)
 
 @main.route('/profile')
 @login_required
@@ -44,8 +49,8 @@ def profile():
     num_pages = user_ratings.pages
     ratings = get_ratings(books)
 
-    next_url = url_for('main.index', page=user_ratings.next_num) if user_ratings.has_next else None
-    prev_url = url_for('main.index', page=user_ratings.prev_num) if user_ratings.has_prev else None
+    next_url = url_for('main.profile', page=user_ratings.next_num) if user_ratings.has_next else None
+    prev_url = url_for('main.profile', page=user_ratings.prev_num) if user_ratings.has_prev else None
 
     return render_template('profile.html', books=books, ratings=ratings,
                             page=page, num_pages=num_pages,

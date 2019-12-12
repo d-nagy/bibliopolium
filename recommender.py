@@ -33,11 +33,13 @@ def recommend_books(predictions_df, user_id, books_df, original_ratings_df, num_
     # Get and sort the user's predictions
     sorted_user_predictions = predictions_df.loc[user_id].sort_values(ascending=False)
 
+    books_df = books_df.drop(['title', 'image_url', 'genre'], axis=1)
+
     # Get the user's data and merge in the book information
     user_data = original_ratings_df[original_ratings_df.user_id == (user_id)]
     user_full = (user_data.merge(books_df, how='left', left_on='book_id', right_on='book_id').
                     sort_values(['rating'], ascending=False)
-                )
+                ).drop(['rating'], axis=1)
 
     print(f'User {user_id} has alread rated {user_full.shape[0]} books.')
     print(f'Recommending the highest {num_recommendations} predicted ratings books not already rated.')
@@ -55,9 +57,12 @@ def recommend_books(predictions_df, user_id, books_df, original_ratings_df, num_
     return user_full, recommendations
 
 if __name__ == '__main__':
-    already_rated, predictions = recommend_books(preds_df, 1, books_df, ratings_df, 10)
+    already_rated, predictions = recommend_books(preds_df, 1, books_df, ratings_df, 12)
 
     print()
-    print(already_rated.head(10))
+    print(already_rated.head(12))
     print()
-    print(predictions.head(10))
+    print(predictions.head(12))
+    print()
+    book_ids = predictions['book_id']
+    print(list(book_ids))

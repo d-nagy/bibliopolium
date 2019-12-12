@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 
+{% set n = books|length %}
+{% set cols = ((n-1)//6) + 1 %}
+
 {% block content %}
 <section class="hero has-text-left is-primary">
   <div class="hero-body">
@@ -12,6 +15,46 @@
       </h2>
     </div>
   </div>
+</section>
+
+<section class="container has-text-centered is-spaced" style="padding: 30px">
+  {% if n > 0 %}
+      {% for j in range(cols) %}
+      <div class="columns bookshelf">
+          {% for i in range(6) %}
+          {% set k = 6*j + i %}
+          <div class="column">
+              {% if k < n %}
+                  {% set num_ratings = ratings[k][0] %}
+                  {% set average_rating = ratings[k][1] %}
+                  <div class="card book-card">
+                      <div class="card-image">
+                      <figure class="image is-98by146">
+                          <img src="{{ books[k].image_url }}" alt="{{ books[k].title }}">
+                      </figure>
+                      </div>
+                      <div class="card-content has-text-left">
+                      <p class="has-text-weight-bold">{{ books[k].title }}</p>
+                      <p>{{ books[k].genre }}</p>
+                      {% if num_ratings > 0 %}
+                          <p>
+                          <div class="Stars" style="--rating: {{ average_rating }};">
+                              <span class="ratingcount">{{ num_ratings }}</span>
+                          </div>
+                          </p>
+                      {% else %}
+                          <p class="has-text-grey has-text-weight-light">No ratings</p>
+                      {% endif %}
+                      </div>
+                  </div>
+              {% endif %}
+          </div>
+          {% endfor %}
+      </div>
+      {% endfor %}
+  {% else %}
+      <h1>We cannot recommend anything to you yet!</h1>
+  {% endif %}
 </section>
 
 {% endblock %}
