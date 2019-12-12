@@ -1,0 +1,22 @@
+{% macro book_card(book, num_ratings, average_rating, id) %}
+<div id="{{ id }}" class="card book-card launch-modal" data-id="{{ book.book_id }}" onclick="launchModal('{{ id }}')">
+    <div class="card-image">
+        <figure class="image is-98by146">
+        <img src="{{ book.image_url }}" alt="{{ book.title }}">
+        </figure>
+    </div>
+    <div class="card-content has-text-left">
+        <p class="book-card-title has-text-weight-bold">{{ book.title }}</p>
+        <p class="book-card-genre">{{ book.genre }}</p>
+        {% if num_ratings > 0 %}
+        <p class="book-card-rating">
+            <div class="Stars" style="--rating: {{ average_rating }};">
+                <span class="ratingcount">{{ num_ratings }}</span>
+            </div>
+        </p>
+        {% else %}
+        <p class="has-text-grey has-text-weight-light">No ratings</p>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}

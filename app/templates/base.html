@@ -8,7 +8,9 @@
     <title>Bibliopolium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
-    <link rel="shortcut icon" href="/static/images/favicon.ico">
+    <link rel="shortcut icon" href="/static/images/favicon.ico" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/static/js/index.js"></script>
 </head>
 
 <body>
@@ -68,6 +70,31 @@
 
     {% block content %}
     {% endblock %}
+
+    <div class="modal">
+        <div class="modal-background" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column is-5">
+                        <figure class="image is-98by146">
+                            <img id="modal_book_cover" src="https://images.gr-assets.com/books/1447303603m/2767052.jpg">
+                        </figure>
+                    </div>
+                    <div id="modal_content" class="column">
+                        <p id="modal_book_title" class="title">Book Title</p>
+                        <p id="modal_book_genre" class="subtitle">genre</p>
+                        <p id="modal_book_rating">
+                            <div class="Stars" style="--rating: 4;">
+                                <span class="ratingcount">10</span>
+                            </div>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close" onclick="closeModal()"></button>
+    </div>
 </body>
 
 </html>

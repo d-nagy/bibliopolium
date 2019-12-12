@@ -53,3 +53,11 @@
 .hero {
     background-image: url("../images/bookshelf_blurred.jpg");
 }
+
+.modal-background {
+    background-color: rgba(10, 10, 10, 0.5) !important;
+}
+
+#modal_book_genre {
+    margin-bottom: 10px;
+}
