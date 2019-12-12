@@ -8,7 +8,7 @@
 
 {% block content %}
 <section class="container has-text-centered is-spaced" style="padding: 30px">
-  {{ paginator.paginator(page, 'index', next_url, prev_url) }}
+  {{ paginator.paginator(page, 'index', next_url, prev_url, num_pages) }}
 
   {% for j in range(cols) %}
   <div class="columns bookshelf">
@@ -18,14 +18,15 @@
         {% if k < n %}
           {% set num_ratings = ratings[k][0] %}
           {% set average_rating = ratings[k][1] %}
+          {% set user_rating = ratings[k][2] %}
           {% set id = 'book_card_' + k|string %}
-          {{ book_card.book_card(books[k], num_ratings, average_rating, id) }}
+          {{ book_card.book_card(books[k], num_ratings, average_rating, user_rating, id) }}
         {% endif %}
       </div>
     {% endfor %}
   </div>
   {% endfor %}
 
-  {{ paginator.paginator(page, 'index', next_url, prev_url) }}
+  {{ paginator.paginator(page, 'index', next_url, prev_url, num_pages) }}
 </section>
 {% endblock %}

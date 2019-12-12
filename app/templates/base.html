@@ -7,9 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bibliopolium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+    <link rel="stylesheet" href="/static/css/all.min.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
     <link rel="shortcut icon" href="/static/images/favicon.ico" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/static/js/all.min.js"></script>
     <script src="/static/js/index.js"></script>
 </head>
 
@@ -81,14 +83,43 @@
                             <img id="modal_book_cover" src="https://images.gr-assets.com/books/1447303603m/2767052.jpg">
                         </figure>
                     </div>
-                    <div id="modal_content" class="column">
-                        <p id="modal_book_title" class="title">Book Title</p>
-                        <p id="modal_book_genre" class="subtitle">genre</p>
-                        <p id="modal_book_rating">
-                            <div class="Stars" style="--rating: 4;">
-                                <span class="ratingcount">10</span>
+                    <div class="column">
+                        <div class="media">
+                            <div id="modal_content" class="media-content">
+                                <p id="modal_book_title" class="title is-4">Book Title</p>
+                                <p id="modal_book_genre" class="subtitle">genre</p>
                             </div>
-                        </p>
+                        </div>
+                        <div class="media">
+                            <div class="media-content">
+                                {% if current_user.is_authenticated %}
+                                    <form method="POST" action="/rate_book">
+                                        <p class="is-size-5">Rate this book:</p>
+                                        <p>
+                                            <div class="rating-group">
+                                                <input class="rating__input rating__input--none" name="rating" id="rating-none" value="0" type="radio" checked>
+                                                <label aria-label="No rating" class="rating__label" for="rating-none"><i class="rating__icon rating__icon--none fa fa-ban"></i></label>
+                                                <label aria-label="1 star" class="rating__label" for="rating-1"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                <input class="rating__input" name="rating" id="rating-1" value="1" type="radio">
+                                                <label aria-label="2 stars" class="rating__label" for="rating-2"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                <input class="rating__input" name="rating" id="rating-2" value="2" type="radio">
+                                                <label aria-label="3 stars" class="rating__label" for="rating-3"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                <input class="rating__input" name="rating" id="rating-3" value="3" type="radio">
+                                                <label aria-label="4 stars" class="rating__label" for="rating-4"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                <input class="rating__input" name="rating" id="rating-4" value="4" type="radio">
+                                                <label aria-label="5 stars" class="rating__label" for="rating-5"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                <input class="rating__input" name="rating" id="rating-5" value="5" type="radio">
+                                            </div>
+                                        </p>
+                                        <input type="hidden" id="book_id" name="book_id" value="#">
+                                        <input type="hidden" id="next_url" name="next_url" value="#">
+                                        <button id="submit_rating" class="button is-primary" style="margin-top: 20px;">Submit</button>
+                                    </form>
+                                {% else %}
+                                    <p class="is-size-5"><a href="login">Login</a> or <a href="signup">Sign Up</a> to rate this book.</p>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

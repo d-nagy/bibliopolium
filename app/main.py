@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, url_for
+from flask import Blueprint, render_template, request, url_for, jsonify, redirect
 from flask_login import login_required, current_user
+from sqlalchemy import and_
 from . import db
-from .models import Book
+from .models import Book, Rating
 from .recommender import get_recommendations
 
 main = Blueprint('main', __name__)
@@ -12,14 +13,24 @@ def get_ratings(books):
         rating_values = [r.rating for r in book.users.all()]
         num_ratings = len(rating_values)
         mean_rating = 0 if num_ratings < 1 else round(sum(rating_values) / num_ratings, 2)
-        ratings.append((num_ratings, mean_rating))
+
+        user_rating = 0
+        if current_user.is_authenticated:
+            user_rating = Rating.query.filter(and_(Rating.user_id==current_user.user_id, Rating.book_id==book.book_id)).first()
+            if user_rating is None:
+                user_rating = 0
+            else:
+                user_rating = user_rating.rating
+
+        ratings.append((num_ratings, mean_rating, int(user_rating)))
+
     return ratings
 
 @main.route('/')
 @main.route('/index')
 def index():
     page = request.args.get('page', 1, type=int)
-    books = Book.query.paginate(page, 12, False)
+    books = Book.query.paginate(page, 24, False)
 
     ratings = get_ratings(books.items)
 
@@ -27,7 +38,8 @@ def index():
     prev_url = url_for('main.index', page=books.prev_num) if books.has_prev else None
 
     return render_template('index.html', books=books.items, ratings=ratings,
-                            page=page, next_url=next_url, prev_url=prev_url)
+                            page=page, next_url=next_url, prev_url=prev_url,
+                            num_pages=books.pages)
 
 @main.route('/recommended')
 @login_required
@@ -55,3 +67,28 @@ def profile():
     return render_template('profile.html', books=books, ratings=ratings,
                             page=page, num_pages=num_pages,
                             next_url=next_url, prev_url=prev_url)
+
+@main.route('/rate_book', methods=['POST'])
+@login_required
+def rate_book():
+    book_id = int(request.form.get('book_id'))
+    rating = int(request.form.get('rating'))
+    next_url = request.form.get('next_url')
+
+    user_rating = Rating.query.filter(and_(Rating.user_id==current_user.user_id, Rating.book_id==book_id)).first()
+    if user_rating is not None:
+        if rating == 0:
+            # Delete rating
+            db.session.delete(user_rating)
+        else:
+            # Update rating
+            user_rating.rating = rating
+    else:
+        if rating != 0:
+            # Add new rating
+            new_rating = Rating(user_id=current_user.user_id, book_id=book_id, rating=rating)
+            db.session.add(new_rating)
+
+    db.session.commit()
+
+    return redirect(next_url)
