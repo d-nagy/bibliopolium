@@ -5,14 +5,26 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Flask Auth Example</title>
+    <title>Bibliopolium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="shortcut icon" href="/static/images/favicon.ico">
 </head>
 
 <body>
     <nav class="navbar is-spaced has-shadow" role="navigation">
         <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item">
+                    <img src="/static/images/logo-via-logohub.png" width="213" height="32">
+                </a>
+
+                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
             <div class="navbar-menu">
                 <div class="navbar-start">
                     <a href="{{ url_for('main.index') }}" class="navbar-item">
