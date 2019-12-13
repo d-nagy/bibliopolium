@@ -49,7 +49,18 @@ def index():
 @main.route('/recommended')
 @login_required
 def recommended():
-    recommendations = get_recommendations(current_user.user_id, db.engine, 12)
+    if current_user.books.count() > 0:
+        recommendations = get_recommendations(current_user.user_id, db.engine, 12)
+    else:
+        sql = ("SELECT book_id "
+               "FROM rating "
+               "GROUP BY book_id "
+               "HAVING COUNT(*) > 10 "
+               "ORDER BY AVG(rating) DESC "
+               "LIMIT 12;")
+        query_result = db.engine.execute(sql)
+        recommendations = [row[0] for row in query_result]
+
     books = [Book.query.filter_by(book_id=book_id).first() for book_id in recommendations]
     ratings = get_ratings(books)
 
