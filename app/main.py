@@ -29,17 +29,22 @@ def get_ratings(books):
 @main.route('/')
 @main.route('/index')
 def index():
+    search = request.args.get('search', '', type=str)
     page = request.args.get('page', 1, type=int)
-    books = Book.query.paginate(page, 24, False)
+
+    if search == '':
+        books = Book.query.paginate(page, 24, False)
+    else:
+        books = Book.query.filter(Book.title.like(f'%{search}%')).paginate(page, 24, False)
 
     ratings = get_ratings(books.items)
 
-    next_url = url_for('main.index', page=books.next_num) if books.has_next else None
-    prev_url = url_for('main.index', page=books.prev_num) if books.has_prev else None
+    next_url = url_for('main.index', page=books.next_num, search=search) if books.has_next else None
+    prev_url = url_for('main.index', page=books.prev_num, search=search) if books.has_prev else None
 
     return render_template('index.html', books=books.items, ratings=ratings,
-                            page=page, next_url=next_url, prev_url=prev_url,
-                            num_pages=books.pages)
+                            page=page, search=search, next_url=next_url,
+                            prev_url=prev_url, num_pages=books.pages)
 
 @main.route('/recommended')
 @login_required
@@ -54,18 +59,25 @@ def recommended():
 @main.route('/profile')
 @login_required
 def profile():
+    search = request.args.get('search', '', type=str)
     page = request.args.get('page', 1, type=int)
-    user_ratings = current_user.books.paginate(page, 12, False)
 
-    books = [r.book for r in user_ratings.items]
-    num_pages = user_ratings.pages
+    if search == '':
+        user_ratings = current_user.books.paginate(page, 24, False)
+        books = [r.book for r in user_ratings.items]
+        num_pages = user_ratings.pages
+    else:
+        user_ratings = current_user.books.all()
+        books = [r.book for r in user_ratings.items if search.lower() in r.book.title.lower()]
+        num_pages = ((len(books)-1) // 24) + 1
+
     ratings = get_ratings(books)
 
-    next_url = url_for('main.profile', page=user_ratings.next_num) if user_ratings.has_next else None
-    prev_url = url_for('main.profile', page=user_ratings.prev_num) if user_ratings.has_prev else None
+    next_url = url_for('main.profile', page=user_ratings.next_num, search=search) if user_ratings.has_next else None
+    prev_url = url_for('main.profile', page=user_ratings.prev_num, search=search) if user_ratings.has_prev else None
 
     return render_template('profile.html', books=books, ratings=ratings,
-                            page=page, num_pages=num_pages,
+                            page=page, search=search, num_pages=num_pages,
                             next_url=next_url, prev_url=prev_url)
 
 @main.route('/rate_book', methods=['POST'])
@@ -92,3 +104,22 @@ def rate_book():
     db.session.commit()
 
     return redirect(next_url)
+
+@main.route('/search_index')
+def search_index():
+    term = request.args.get('term')
+    books = Book.query.filter(Book.title.like(f'%{term}%')).all()
+
+    titles = [book.title for book in books]
+
+    return jsonify(titles)
+
+@main.route('/search_profile')
+def search_profile():
+    term = request.args.get('term')
+    user_ratings = current_user.books.all()
+
+    books = [r.book for r in user_ratings.items]
+    titles = [book.title for book in books if term.lower() in books.title.lower()]
+
+    return jsonify(titles)

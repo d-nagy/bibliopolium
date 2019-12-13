@@ -28,3 +28,42 @@ function closeModal() {
     $('html').removeClass('is-clipped');
     $('.modal').find('.book-card-rating').remove();
 }
+
+function searchBooks(val, url) {
+    re = /^[Tt]he\s/i;
+    val = val.replace(re, '');
+    if (val.length < 4) return;
+
+    $.ajax({
+        url: url,
+        method: 'GET',
+        data: { term: val },
+        success: function(data) {
+            var datalist = $('#searchresults');
+            var options = [];
+
+            datalist.children('option').each(function() {
+                var opt_val = this.value;
+                if (!data.includes(opt_val)) {
+                    this.remove();
+                } else {
+                    options.push(opt_val);
+                }
+            });
+
+            data.forEach(function(item, index) {
+                if (!options.includes(item)) {
+                    var opt = $('<option></option>').attr('value', item);
+                    datalist.append(opt);
+                }
+            });
+        }
+    });
+}
+
+function submitSearch() {
+    var term = $('.search-books').first().val();
+    var url_param = { search: term };
+    var url = window.location.href + '?' + $.param(url_param);
+    window.location.href = url;
+}

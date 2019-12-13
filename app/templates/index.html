@@ -8,7 +8,34 @@
 
 {% block content %}
 <section class="container has-text-centered is-spaced" style="padding: 30px">
-  {{ paginator.paginator(page, 'index', next_url, prev_url, num_pages) }}
+  <nav class="level">
+    <div class="level-left">
+      <div class="level-item">
+          <div class="field has-addons">
+            <div class="control">
+                <input class="input search-books" type="text" name="search" id="search_index" placeholder="Search for a book" list="searchresults" autocomplete="off" oninput="searchBooks(this.value, this.id)">
+            </div>
+            <div class="control">
+              <a id="search_index_button" class="button is-primary search-button" onclick="submitSearch()">
+                Search
+              </a>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="level-right">
+      <div class="level-item">
+          {{ paginator.paginator(page, 'index', next_url, prev_url, num_pages) }}
+      </div>
+    </div>
+  </nav>
+
+  {% if search != '' %}
+    <div class="notification is-info" style="background-color: #288">
+      <a class="delete" href="/index"></a>
+      Search results for <strong>"{{ search }}"</strong>
+    </div>
+  {% endif %}
 
   {% for j in range(cols) %}
   <div class="columns bookshelf">
