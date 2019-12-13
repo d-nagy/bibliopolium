@@ -9,6 +9,8 @@ until they rate a book. The website supports the addition and deletion of rating
 that will update the recommendations and an AJAX powered search bar that can
 be used to search through all 10000 books.
 
+#
+
 Instructions for use:
 
 1. Unzip the submission folder into a directory of your choice.
@@ -26,3 +28,14 @@ Instructions for use:
         flask run
 
 5. Navigate to localhost:5000 to check it out!
+
+#
+
+Useful info:
+
+- For every user in the original CSV dataset, I've created a user account with the following details:
+
+        username: user<user_id>
+        password: letmein
+
+For example, user with id 4 is now "user4" with password "letmein".
