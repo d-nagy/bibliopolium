@@ -2,7 +2,7 @@ import sqlite3
 import pandas as pd
 import bcrypt
 
-ratings_df = pd.read_csv('./goodbooks/ratings.csv').head(5000)
+ratings_df = pd.read_csv('./goodbooks/ratings.csv').head(10000)
 books_df = pd.read_csv('./goodbooks/books.csv')
 tags_df = pd.read_csv('./goodbooks/tags.csv')
 book_tags_df = pd.read_csv('./goodbooks/book_tags.csv')
