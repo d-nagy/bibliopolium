@@ -11,18 +11,18 @@ be used to search through all 10000 books.
 
 Instructions for use:
 
-1. Unzip the submission folder into a directory of your choice.
+    1. Unzip the submission folder into a directory of your choice.
 
-2. In the directory, install any Python requirements using:
+    2. In the directory, install any Python requirements using:
 
         pip install -r requirements.txt
 
-3. Populate the database by running:
+    3. Populate the database by running:
 
         python populate_db.py
 
-4. Run the website using:
+    4. Run the website using:
 
         flask run
 
-5. Navigate to localhost:5000 to check it out!
+    5. Navigate to localhost:5000 to check it out!
