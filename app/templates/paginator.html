@@ -3,26 +3,32 @@
     <a class="pagination-previous" href="{{ prev_url }}" {{ 'disabled' if page == 1 else '' }}>Previous</a>
     <a class="pagination-next" href="{{ next_url }}" {{ 'disabled' if page == total_pages else '' }}>Next page</a>
     <ul class="pagination-list">
-      {% if page > 3 and page < total_pages - 2 %}
-        <li><a class="pagination-link" href="{{ this_url }}?page=1">1</a></li>
-        <li><span class="pagination-ellipsis">&hellip;</span></li>
-        <li><a class="pagination-link" href="{{ prev_url }}">{{ page-1 }}</a></li>
-        <li><a class="pagination-link is-current">{{ page }}</a></li>
-        <li><a class="pagination-link" href="{{ next_url }}">{{ page+1 }}</a></li>
-        <li><span class="pagination-ellipsis">&hellip;</span></li>
-        <li><a class="pagination-link" href="{{ this_url }}?page={{ total_pages }}">{{ total_pages }}</a></li>
-      {% elif page < 4 %}
-        <li><a class="pagination-link {{ 'is-current' if page == 1 else '' }}" href="{{ this_url }}?page=1">1</a></li>
-        <li><a class="pagination-link {{ 'is-current' if page == 2 else '' }}" href="{{ this_url }}?page=2">2</a></li>
-        <li><a class="pagination-link {{ 'is-current' if page == 3 else '' }}" href="{{ this_url }}?page=3">3</a></li>
-        <li><span class="pagination-ellipsis">&hellip;</span></li>
-        <li><a class="pagination-link" href="{{ this_url }}?page={{ total_pages }}">{{ total_pages }}</a></li>
+      {% if total_pages > 5 %}
+        {% if page > 3 and page < total_pages - 2 %}
+          <li><a class="pagination-link" href="{{ this_url }}?page=1">1</a></li>
+          <li><span class="pagination-ellipsis">&hellip;</span></li>
+          <li><a class="pagination-link" href="{{ prev_url }}">{{ page-1 }}</a></li>
+          <li><a class="pagination-link is-current">{{ page }}</a></li>
+          <li><a class="pagination-link" href="{{ next_url }}">{{ page+1 }}</a></li>
+          <li><span class="pagination-ellipsis">&hellip;</span></li>
+          <li><a class="pagination-link" href="{{ this_url }}?page={{ total_pages }}">{{ total_pages }}</a></li>
+        {% elif page < 4 %}
+          <li><a class="pagination-link {{ 'is-current' if page == 1 else '' }}" href="{{ this_url }}?page=1">1</a></li>
+          <li><a class="pagination-link {{ 'is-current' if page == 2 else '' }}" href="{{ this_url }}?page=2">2</a></li>
+          <li><a class="pagination-link {{ 'is-current' if page == 3 else '' }}" href="{{ this_url }}?page=3">3</a></li>
+          <li><span class="pagination-ellipsis">&hellip;</span></li>
+          <li><a class="pagination-link" href="{{ this_url }}?page={{ total_pages }}">{{ total_pages }}</a></li>
+        {% else %}
+          <li><a class="pagination-link" href="{{ this_url }}?page=1">1</a></li>
+          <li><span class="pagination-ellipsis">&hellip;</span></li>
+          <li><a class="pagination-link {{ 'is-current' if page == total_pages-2 else '' }}" href="{{ this_url }}?page={{ total_pages - 2 }}">{{ total_pages - 2 }}</a></li>
+          <li><a class="pagination-link {{ 'is-current' if page == total_pages-1 else '' }}" href="{{ this_url }}?page={{ total_pages - 1 }}">{{ total_pages - 1 }}</a></li>
+          <li><a class="pagination-link {{ 'is-current' if page == total_pages else '' }}" href="{{ this_url }}?page={{ total_pages }}">{{ total_pages }}</a></li>
+        {% endif %}
       {% else %}
-        <li><a class="pagination-link" href="{{ this_url }}?page=1">1</a></li>
-        <li><span class="pagination-ellipsis">&hellip;</span></li>
-        <li><a class="pagination-link {{ 'is-current' if page == total_pages-2 else '' }}" href="{{ this_url }}?page={{ total_pages - 2 }}">{{ total_pages - 2 }}</a></li>
-        <li><a class="pagination-link {{ 'is-current' if page == total_pages-1 else '' }}" href="{{ this_url }}?page={{ total_pages - 1 }}">{{ total_pages - 1 }}</a></li>
-        <li><a class="pagination-link {{ 'is-current' if page == total_pages else '' }}" href="{{ this_url }}?page={{ total_pages }}">{{ total_pages }}</a></li>
+        {% for i in range(1, total_pages+1) %}
+          <li><a class="pagination-link {{ 'is-current' if page == i else '' }}" href="{{ this_url }}?page={{ i }}">{{ i }}</a></li>
+        {% endfor %}
       {% endif %}
     </ul>
   </nav>

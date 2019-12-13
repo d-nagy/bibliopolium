@@ -77,15 +77,26 @@ def profile():
         user_ratings = current_user.books.paginate(page, 24, False)
         books = [r.book for r in user_ratings.items]
         num_pages = user_ratings.pages
+        has_next = user_ratings.has_next
+        has_prev = user_ratings.has_prev
+        next_num = user_ratings.next_num
+        prev_num = user_ratings.prev_num
     else:
         user_ratings = current_user.books.all()
-        books = [r.book for r in user_ratings.items if search.lower() in r.book.title.lower()]
-        num_pages = ((len(books)-1) // 24) + 1
+        all_books = [r.book for r in user_ratings if search.lower() in r.book.title.lower()]
+        num_pages = ((len(all_books)-1) // 24) + 1
+        l = 24 * (page - 1)
+        h = l + 24
+        books = all_books[l:h]
+        has_next = page < num_pages
+        has_prev = page > 1 and num_pages > 1
+        next_num = page + 1
+        prev_num = page - 1
 
     ratings = get_ratings(books)
 
-    next_url = url_for('main.profile', page=user_ratings.next_num, search=search) if user_ratings.has_next else None
-    prev_url = url_for('main.profile', page=user_ratings.prev_num, search=search) if user_ratings.has_prev else None
+    next_url = url_for('main.profile', page=next_num, search=search) if has_next else None
+    prev_url = url_for('main.profile', page=prev_num, search=search) if has_prev else None
 
     return render_template('profile.html', books=books, ratings=ratings,
                             page=page, search=search, num_pages=num_pages,
@@ -130,7 +141,7 @@ def search_profile():
     term = request.args.get('term')
     user_ratings = current_user.books.all()
 
-    books = [r.book for r in user_ratings.items]
-    titles = [book.title for book in books if term.lower() in books.title.lower()]
+    books = [r.book for r in user_ratings]
+    titles = [book.title for book in books if term.lower() in book.title.lower()]
 
     return jsonify(titles)

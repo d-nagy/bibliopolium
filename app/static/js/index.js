@@ -64,6 +64,7 @@ function searchBooks(val, url) {
 function submitSearch() {
     var term = $('.search-books').first().val();
     var url_param = { search: term };
-    var url = window.location.href + '?' + $.param(url_param);
+    var url_root = window.location.href.split('?')[0];
+    var url = url_root + '?' + $.param(url_param);
     window.location.href = url;
 }
