@@ -1,5 +1,7 @@
 # Bibliopolium README
 
+!["Bibliopolium"](screenshots/screenshot.png "Bibliopolium")
+
 Welcome to my humble book rating website. It is built using Flask, supports
 user registration and login with passwords and uses an SQLite database to store
 all the book, user and rating data. Recommendations are made using a Singular
@@ -9,13 +11,15 @@ until they rate a book. The website supports the addition and deletion of rating
 that will update the recommendations and an AJAX powered search bar that can
 be used to search through all 10000 books.
 
+The dataset used is the Goodbooks-10K dataset, hosted at <https://github.com/zygmuntz/goodbooks-10k>.
+
 #
 
 Instructions for use:
 
-1. Unzip the submission folder into a directory of your choice.
+1. Clone the repo into a directory of your choice.
 
-2. In the directory, install any Python requirements using:
+2. In the root directory of the project, install any Python requirements using:
 
         pip install -r requirements.txt
 
