@@ -1,6 +1,7 @@
 from flask_login import UserMixin
 from . import db
 
+
 class User(UserMixin, db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
@@ -11,6 +12,7 @@ class User(UserMixin, db.Model):
     def get_id(self):
         return self.user_id
 
+
 class Book(db.Model):
     book_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -19,9 +21,18 @@ class Book(db.Model):
 
     users = db.relationship('Rating', back_populates='book', lazy='dynamic')
 
+
 class Rating(db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True, nullable=False)
-    book_id = db.Column(db.Integer, db.ForeignKey('book.book_id'), primary_key=True, nullable=False)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('user.user_id'),
+        primary_key=True, nullable=False
+    )
+
+    book_id = db.Column(
+        db.Integer, db.ForeignKey('book.book_id'),
+        primary_key=True, nullable=False
+    )
+
     rating = db.Column(db.Integer, nullable=False)
 
     book = db.relationship('Book', back_populates='users')

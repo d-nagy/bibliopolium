@@ -7,17 +7,20 @@ from .models import User
 
 auth = Blueprint('auth', __name__)
 
+
 @auth.route('/login')
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.recommended'))
     return render_template('login.html')
 
+
 @auth.route('/signup')
 def signup():
     if current_user.is_authenticated:
         return redirect(url_for('main.recommended'))
     return render_template('signup.html')
+
 
 @auth.route('/logout')
 @login_required
@@ -52,6 +55,7 @@ def signup_post():
     db.session.commit()
 
     return redirect(url_for('auth.login'))
+
 
 @auth.route('/login', methods=['POST'])
 def login_post():
